@@ -27,6 +27,14 @@ const config = {
         background: "rgb(var(--background))",
         foreground: "rgb(var(--foreground))",
       },
+      keyframes: {
+        crate: {
+          '50%': { background: 'transparent' },
+        }
+      },
+      animation: {
+        crate: 'crate 1s steps(1) infinite'
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],

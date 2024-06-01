@@ -17,6 +17,14 @@ const TerminalStatement = ({heading, className, children} : {heading: string, cl
   )
 }
 
+const TerminalBlinkerStatement = () => {
+  return (
+    <div className={robotoMono.className}>
+      <div className="flex flex-row gap-2 items-center">&gt; <span className="bg-[#e7d184] w-3 h-5 animate-crate"></span></div>
+    </div>
+  )
+}
+
 const IntroLink = ({href, icon} : {href: string, icon: React.ReactNode}) => {
   return (
     <div className="mx-2 mb-2 mt-4 md:mx-0 md:mt-2">
@@ -26,7 +34,7 @@ const IntroLink = ({href, icon} : {href: string, icon: React.ReactNode}) => {
 }
 
 export const metadata: Metadata = {
-  title: 'Yash Agarwal Portfolio',
+  title: "Yash Agarwal's Portfolio",
   description: 'Yash Agarwal Portfolio',
 }
 
@@ -67,7 +75,7 @@ export default function Page() {
                 </div>
             </section>
 
-            <section className="lg:w-3/4 mx-auto px-6 md:px-8 xl:px-12 pt-8 sm:pt-6 md:pt-7">
+            <section className="lg:w-3/4 mx-auto px-6 md:px-8 xl:px-12 pt-8 sm:pt-6 md:pt-7 mb-8">
                 <div className="flex flex-row gap-1 w-100 py-1 px-2 bg-[#f5f5f5] rounded-t-lg">
                     <div className="bg-[#f96256] w-3 h-3 rounded-full"></div>
                     <div className="bg-[#fdbc3d] w-3 h-3 rounded-full"></div>
@@ -89,6 +97,7 @@ export default function Page() {
                   <TerminalStatement heading='Yash.currentlyReading'>
                     &quot;Database Internals&quot;
                   </TerminalStatement>
+                  <TerminalBlinkerStatement />
                 </div>
             </section>
 
