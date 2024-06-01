@@ -11,18 +11,18 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <div className="w-full h-full">
-          <header className="min-h-16 bg-background fixed z-50 w-full">
-            <div className="mx-auto w-full max-w-screen-xl">
-              <div className="flex flex-row items-center justify-between flex-wrap px-4 py-4 md:py-0">
-                <span className="text-xl font-bold text-foreground">Yash Agarwal&apos;s Website</span>
-                <div className="h-16 flex flex-row items-center">
-                  <a href="/about">About</a>
-                  <a href="/projects">Projects</a>
-                  <a href="/contact">Contact</a>
-                </div>
+        <header className="min-h-16 bg-background fixed z-50 w-full">
+          <div className="mx-auto w-full max-w-screen-xl">
+            <div className="flex flex-row items-center justify-between flex-wrap px-4 py-4 md:py-0">
+              <span className="text-xl font-bold text-foreground">Yash Agarwal&apos;s Website</span>
+              <div className="h-16 flex flex-row items-center">
+                <a href="/about">About</a>
+                <a href="/projects">Projects</a>
+                <a href="/contact">Contact</a>
               </div>
             </div>
-          </header>
+          </div>
+        </header>
 
         <main className="max-sm:pt-17 pt-16 mx-auto w-full max-w-screen-xl">
             <section className="lg:w-3/4 py-12 mx-auto px-6 md:px-8 xl:px-12">
@@ -53,6 +53,8 @@ export default function Page() {
                   </div>
                 </div>
             </section>
+
+
         </main>
 
     </div>
