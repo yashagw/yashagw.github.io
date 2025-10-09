@@ -1,16 +1,94 @@
-# The URL the site will be built for
 base_url = "https://yashagw.github.io/"
-
-# Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
-
-# Whether to build a search index to be used later on by a JavaScript library
 build_search_index = true
+title = "Yash Agarwal"
+description = "Personal website and blog of Yash Agarwal, Software Engineer"
+default_language = "en"
+generate_feeds = true
+feed_filenames = ["rss.xml"]
+
+taxonomies = [
+    {name = "tags", feed = true},
+]
 
 [markdown]
-# Whether to do syntax highlighting
-# Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
 highlight_code = true
+highlight_theme = "inspired-github"
 
 [extra]
-# Put all your custom variables here
+author = "Yash Agarwal"
+current_location = "Bangalore, India"
+
+show_experience = true
+show_skills = true
+show_education = true
+
+languages = ["Go", "Python", "SQL", "JavaScript", "TypeScript"]
+technologies = ["AWS", "Azure", "Docker", "Kubernetes", "gRPC", "PostgreSQL", "Redis"]
+
+[[extra.contact]]
+icon = "icons/resume.svg"
+text = "Resume"
+url = "https://drive.google.com/file/d/1GQ9fbXXdbGKR66xLCeZJAmXP7mwRr7O0/view?usp=drive_link"
+
+[[extra.contact]]
+icon = "icons/email.svg"
+text = "yash.ag@outlook.com"
+url = "mailto:yash.ag@outlook.com"
+
+[[extra.contact]]
+icon = "icons/twitter.svg"
+text = "@yashagw"
+url = "https://twitter.com/yashagw"
+
+[[extra.contact]]
+icon = "icons/linkedin.svg"
+text = "yashagw"
+url = "https://linkedin.com/in/yashagw"
+
+[[extra.contact]]
+icon = "icons/github.svg"
+text = "yashagw"
+url = "https://github.com/yashagw"
+
+[[extra.education]]
+degree = "Bachelor of Technology"
+field = "Electrical Engineering"
+institution = "National Institute of Technology, Kurukshetra"
+year = "Dec 2020 – June 2024"
+gpa = "9.3 CGPA"
+
+[[extra.education]]
+degree = "CBSE - 12th Standard"
+field = ""
+institution = "Vyasa International School, Bangalore"
+year = "April 2019 – April 2020"
+gpa = "95.2%"
+
+[[extra.companies]]
+name = "Averlon Technologies"
+url = "https://averlon.ai"
+positions = [
+  { title = "Software Engineer", duration = "Jun 2024 - Present", current = true, description = "" },
+  { title = "Software Developer Intern", duration = "Jul 2023 - Feb 2024", current = false, description = "Enhanced attack chain analysis by adding application-layer misconfiguration scanning. Developed testing frameworks for network reachability services." },
+  { title = "Software Developer Intern", duration = "Jan 2023 - Jun 2023", current = false, description = "Built testing framework for network reachability service with 35-40 test cases. Enabled AWS EKS support and worked on gRPC Golang backend integration." }
+]
+
+[[extra.companies]]
+name = "Upwork"
+url = "https://upwork.com"
+positions = [
+  { title = "Freelance Software Developer", duration = "May 2021 - Dec 2022", current = false, description = "Delivered 15+ professional projects with 100% client satisfaction rate through effective project management and technical execution." }
+]
+
+[[extra.menu]]
+name = "Home"
+url = "/"
+
+[[extra.menu]]
+name = "Blog"
+url = "/blog/"
+
+[[extra.menu]]
+name = "Projects"
+url = "/projects/"

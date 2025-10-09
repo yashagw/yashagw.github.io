@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="home-container">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <div class="greeting">👋 Hello</div>
+                <p class="intro-paragraph">
+                    I’m Yash Agarwal. I work at <a href="https://averlon.ai" target="_blank" rel="noopener noreferrer">Averlon Technologies</a>, where I build the backend and AI agents that power our cybersecurity platform.
+                </p>
+                <p class="intro-paragraph"></p>
+                    When I'm not shipping code at work, 
+                    I'm deepening my systems understanding — currently building a 
+                    <a href="https://github.com/yashagw/cranedb" target="_blank" rel="noopener noreferrer">relational database from scratch</a> 
+                    in Go because the best way to understand something is to build it yourself.
+                </p>
+                
+                <div class="contact-info">
+                    {% for contact in config.extra.contact %}
+                    {% if contact.text != "Resume" %}
+                    <span class="contact-item">
+                        <img src="{{ get_url(path=contact.icon) }}" alt="{{ contact.text }}" class="contact-icon">
+                        <a href="{{ contact.url }}" {% if not contact.url | starts_with(string="mailto:") %}target="_blank" rel="noopener noreferrer"{% endif %}>{{ contact.text }}</a>
+                    </span>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="{{ get_url(path='images/profile.jpg') }}" alt="{{ config.extra.author }}" class="profile-photo">
+            </div>
+        </div>
+    </section>
+
+    {% if config.extra.show_skills %}
+    <section class="tech-stack">        
+        <div class="tech-categories">
+            <div class="tech-group">
+                <span class="tech-label">Languages:</span>
+                {% for lang in config.extra.languages %}
+                <span class="tech-item">{{ lang }}</span>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+            
+            <div class="tech-group">
+                <span class="tech-label">Tools & Platforms:</span>
+                {% for tech in config.extra.technologies %}
+                <span class="tech-item">{{ tech }}</span>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if config.extra.show_experience %}
+    <section class="experience-section">
+        <h3>Work Experience</h3>
+        <div class="experience-list">
+            {% for company in config.extra.companies %}
+            <div class="company-block">
+                <h4 class="company-title">
+                    <a href="{{ company.url }}" target="_blank" rel="noopener noreferrer">{{ company.name }}</a>
+                </h4>
+                
+                {% for position in company.positions %}
+                <div class="position">
+                    <div class="position-header">
+                        <span class="role">{{ position.title }}</span>
+                        <span class="period">{{ position.duration }}</span>
+                    </div>
+                    {% if position.description %}
+                    <p class="position-description">{{ position.description }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if config.extra.show_education %}
+    <section class="education-section">
+        <h3>Education</h3>
+        <div class="education-list">
+            {% for edu in config.extra.education %}
+            <div class="education-item">
+                <div class="education-header">
+                    <div class="education-main">
+                        <h4 class="institution">{{ edu.institution }}</h4>
+                        <p class="degree">{{ edu.degree }}{% if edu.field %} in {{ edu.field }}{% endif %}</p>
+                    </div>
+                    <div class="education-meta">
+                        <span class="duration">{{ edu.year }}</span>
+                        {% if edu.gpa %}
+                        <span class="gpa">{{ edu.gpa }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock content %}
+

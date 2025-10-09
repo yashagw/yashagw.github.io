@@ -1,0 +1,704 @@
+/* Bear-inspired ultra-minimal CSS */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background: #fff;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+.site-header {
+  padding: 40px 0 20px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 40px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.site-name {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.site-name a {
+  color: #333;
+  text-decoration: none;
+}
+
+.main-nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-item {
+  color: #666;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: #333;
+}
+
+/* Content */
+.home-container {
+  padding-bottom: 40px;
+}
+
+/* Hero section */
+.hero {
+  margin-bottom: 30px;
+}
+
+.hero-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.hero-text {
+  flex: 1;
+}
+
+.greeting {
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.intro-paragraph {
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.intro-paragraph strong {
+  font-weight: 600;
+}
+
+.contact-info {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.contact-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.contact-item:hover .contact-icon {
+  opacity: 1;
+}
+
+.contact-item a {
+  color: #666;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.contact-item a:hover {
+  color: #333;
+  text-decoration: underline;
+}
+
+.hero-image {
+  flex-shrink: 0;
+}
+
+.profile-photo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Tech stack */
+.tech-stack {
+  margin-bottom: 30px;
+  padding-top: 30px;
+  border-top: 1px solid #e1e3e6;
+}
+
+.section-intro {
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.tech-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tech-group {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.tech-label {
+  font-weight: 600;
+  color: #333;
+}
+
+.tech-item {
+  color: #666;
+}
+
+/* Experience */
+.experience-section {
+  margin-bottom: 30px;
+}
+
+.experience-section h3,
+.education-section h3,
+.writing-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.experience-section h3::after,
+.education-section h3::after,
+.writing-section h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 1px;
+  background-color: #bbb;
+}
+
+.company-block {
+  margin-bottom: 30px;
+}
+
+.company-block:last-child {
+  margin-bottom: 0;
+}
+
+.company-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.company-title a {
+  color: #333;
+  text-decoration: none;
+}
+
+.company-title a:hover {
+  text-decoration: underline;
+}
+
+.position {
+  margin-bottom: 15px;
+}
+
+.position:last-child {
+  margin-bottom: 0;
+}
+
+.position-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.role {
+  font-weight: 500;
+  color: #333;
+}
+
+.period {
+  font-size: 14px;
+  color: #666;
+}
+
+.position-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Education */
+.education-section {
+  margin-bottom: 30px;
+}
+
+.education-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.education-item {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 20px;
+}
+
+.education-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.education-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.education-main {
+  flex: 1;
+}
+
+.institution {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.degree {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.education-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.duration {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.gpa {
+  font-size: 13px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Writing */
+.writing-section {
+  margin-bottom: 40px;
+}
+
+.posts-list {
+  margin-bottom: 20px;
+}
+
+.post-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  gap: 15px;
+}
+
+.post-link {
+  color: #333;
+  text-decoration: none;
+  flex: 1;
+}
+
+.post-link:hover {
+  text-decoration: underline;
+}
+
+.post-meta {
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.more-posts a,
+.no-posts {
+  color: #666;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.more-posts a:hover {
+  text-decoration: underline;
+}
+
+.no-posts {
+  margin: 0;
+}
+
+/* Links */
+a {
+  color: #333;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: #000;
+}
+
+/* Footer */
+footer {
+  margin-top: 60px;
+  padding: 20px 0;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  color: #666;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.footer-content .social-links {
+  display: flex;
+  gap: 15px;
+}
+
+.footer-content .social-links a {
+  color: #666;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.footer-content .social-links a:hover {
+  color: #333;
+}
+
+.copyright {
+  font-size: 14px;
+  color: #666;
+}
+
+.copyright a {
+  color: #666;
+  text-decoration: none;
+}
+
+.copyright a:hover {
+  color: #333;
+  text-decoration: underline;
+}
+
+/* Blog pages */
+.blog-container,
+.projects-container {
+  padding-bottom: 40px;
+}
+
+.blog-container h1,
+.projects-container h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.blog-container h1::after,
+.projects-container h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 1px;
+  background-color: #bbb;
+}
+
+.post-list {
+  margin-bottom: 30px;
+}
+
+.post-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 15px;
+  gap: 15px;
+}
+
+.post-title {
+  color: #333;
+  text-decoration: none;
+  flex: 1;
+}
+
+.post-title:hover {
+  text-decoration: underline;
+}
+
+.post-date {
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+}
+
+/* Projects */
+.projects-grid {
+  display: grid;
+  gap: 30px;
+}
+
+.project-card {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+}
+
+.project-card:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.project-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.project-description {
+  color: #666;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.project-tech {
+  margin-bottom: 15px;
+}
+
+.tech-tag {
+  display: inline;
+  font-size: 14px;
+  color: #666;
+}
+
+.project-links a {
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  margin-right: 15px;
+}
+
+.project-links a:hover {
+  text-decoration: underline;
+}
+
+/* Blog post */
+.blog-post h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.blog-meta {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+.blog-content {
+  line-height: 1.7;
+}
+
+.blog-content h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 30px 0 15px;
+}
+
+.blog-content h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 25px 0 10px;
+}
+
+.blog-content p {
+  margin-bottom: 16px;
+}
+
+.blog-content code {
+  background: #f5f5f5;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+.blog-content pre {
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 5px;
+  overflow-x: auto;
+  margin: 20px 0;
+  max-width: 100%;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* Responsive code blocks */
+@media (max-width: 768px) {
+  .blog-content pre {
+    font-size: 0.75rem;
+    padding: 12px;
+  }
+}
+
+.blog-content pre code {
+  background: none;
+  padding: 0;
+}
+
+/* Tags */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.tag {
+  font-size: 12px;
+  color: #666;
+  text-decoration: none;
+  padding: 2px 6px;
+  background: #f5f5f5;
+  border-radius: 3px;
+}
+
+.tag:hover {
+  background: #eee;
+}
+
+/* 404 */
+.error-page {
+  text-align: center;
+  padding: 60px 0;
+}
+
+.error-page h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.error-page p {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.error-page a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.error-page a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .container {
+    padding: 0 15px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .hero-content {
+    flex-direction: column-reverse;
+    gap: 20px;
+  }
+
+  .hero-image {
+    align-self: center;
+  }
+
+  .contact-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tech-categories {
+    gap: 8px;
+  }
+
+  .position-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .post-entry,
+  .post-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .education-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .education-meta {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}

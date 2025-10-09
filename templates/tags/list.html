@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="tags-container">
+    <h1>All Tags</h1>
+    
+    <div class="tags-list">
+        {% for term in terms %}
+        <div class="tag-item">
+            <a href="{{ term.permalink }}" class="tag-link">
+                <span class="tag-name">{{ term.name }}</span>
+                <span class="tag-count">({{ term.pages | length }})</span>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.tags-container {
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.tag-item {
+    margin-bottom: 1rem;
+}
+
+.tag-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: rgba(42, 47, 58, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.tag-link:hover {
+    background-color: var(--border-color);
+    transform: translateY(-2px);
+}
+
+.tag-name {
+    font-weight: 500;
+}
+
+.tag-count {
+    color: #8b949e;
+    font-size: 0.9rem;
+}
+</style>
+{% endblock content %}
