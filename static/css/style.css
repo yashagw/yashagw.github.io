@@ -568,10 +568,18 @@ footer {
 }
 
 /* Blog post */
+.blog-post {
+  margin-top: 0;
+}
+
 .blog-post h1 {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 10px;
+}
+
+.post-header {
+  margin-top: 0;
 }
 
 .blog-meta {

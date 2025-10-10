@@ -1,9 +1,16 @@
 +++
-title = "Understanding Identity Providers (IdP)"
-date = 2025-10-09
-description = "A comprehensive guide to Identity Providers, authentication flows, and token verification"
+title = "Refresher to OIDC"
+date = 2025-10-10
 taxonomies = { tags = ["Authentication", "Authorization", "Security"] }
 +++
+
+## What is OIDC?
+
+OpenID Connect (OIDC) is an identity layer built on top of OAuth 2.0 that enables clients to verify the identity of end-users based on the authentication performed by an authorization server. It provides a simple way to obtain basic profile information about users in an REST-like manner.
+
+OIDC extends OAuth 2.0 with an ID Token (JWT) that contains user identity information, making it easier for applications to authenticate users without handling passwords directly. It's widely used for single sign-on (SSO) and federated identity across web and mobile applications.
+
+**Official Specification:** [OpenID Connect Core 1.0 (RFC)](https://openid.net/specs/openid-connect-core-1_0.html)
 
 ## What is Identity Provider (IdP)
 
@@ -79,12 +86,12 @@ When the client app receives an ID Token, it performs these checks before trusti
 
 ```plaintext
 https://idp.example.com/oauth2/authorize?
-  response_type=code    # or "id_token" for implicit
-  &client_id=CLIENT_ID
-  &redirect_uri=https://clientapp.com/callback
-  &scope=openid%20profile%20email
-  &state=RANDOM_STATE
-  &nonce=RANDOM_NONCE
+  response_type=code&         # What type of response is expected (it could be code or id)
+  client_id=CLIENT_ID&        # Client app’s unique ID
+  redirect_uri=https://clientapp.com/callback&   # Where to send user after login
+  scope=openid profile email&  # What user info your app needs
+  state=xyz123&               # Random value to prevent CSRF attacks & link                                      request-response
+  nonce=abc789                # Random value to prevent replay attacks on ID 
 ```
 
 
@@ -101,3 +108,20 @@ https://idp.example.com/oauth2/authorize?
 - The client sends a random `nonce`.
 - The IDP puts it **inside the ID Token**.
 - The client verifies the `nonce` inside the token matches what it sent → ensures the token is fresh and not reused.
+
+### Common OIDC Scopes
+
+- **`openid`** - Required for OIDC, enables ID token issuance
+- **`profile`** - Basic profile info (name, picture, etc.)
+- **`email`** - User's email address
+- **`address`** - User's physical address
+- **`phone`** - User's phone number
+
+## Security Best Practices
+
+1. **Always use HTTPS** for all OIDC communications
+2. **Validate redirect URIs** - only allow pre-registered URLs
+3. **Use PKCE** (Proof Key for Code Exchange) for public clients
+4. **Implement proper token storage** - secure, httpOnly cookies preferred
+5. **Set appropriate token lifetimes** - balance security vs UX
+6. **Monitor for suspicious activity** - unusual login patterns, token abuse
