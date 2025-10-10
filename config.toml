@@ -1,3 +1,6 @@
+#########################
+# Site Settings
+#########################
 base_url = "https://yashagw.github.io/"
 compile_sass = true
 build_search_index = true
@@ -7,14 +10,43 @@ default_language = "en"
 generate_feeds = true
 feed_filenames = ["rss.xml"]
 
+#########################
+# Taxonomies
+#########################
 taxonomies = [
     {name = "tags", feed = true},
 ]
 
+#########################
+# Markdown / Rendering
+#########################
 [markdown]
 highlight_code = true
 highlight_theme = "inspired-github"
 
+#########################
+# Main Navigation Menu
+#########################
+[[extra.menu]]
+name = "Home"
+url = "/"
+
+[[extra.menu]]
+name = "Blog"
+url = "/blog/"
+
+[[extra.menu]]
+name = "Projects"
+url = "/projects/"
+
+[[extra.menu]]
+name = "Resume"
+url = "https://drive.google.com/file/d/1GQ9fbXXdbGKR66xLCeZJAmXP7mwRr7O0/view?usp=drive_link"
+new_tab = true
+
+#########################
+# Hero Section
+#########################
 [extra]
 author = "Yash Agarwal"
 current_location = "Bangalore, India"
@@ -27,30 +59,32 @@ languages = ["Go", "Python", "SQL", "JavaScript", "TypeScript"]
 technologies = ["AWS", "Azure", "Docker", "Kubernetes", "gRPC", "PostgreSQL", "Redis"]
 
 [[extra.contact]]
-icon = "icons/resume.svg"
-text = "Resume"
-url = "https://drive.google.com/file/d/1GQ9fbXXdbGKR66xLCeZJAmXP7mwRr7O0/view?usp=drive_link"
-
-[[extra.contact]]
 icon = "icons/email.svg"
 text = "yash.ag@outlook.com"
 url = "mailto:yash.ag@outlook.com"
+new_tab = false
 
 [[extra.contact]]
 icon = "icons/twitter.svg"
 text = "@yashagw"
 url = "https://twitter.com/yashagw"
+new_tab = true
 
 [[extra.contact]]
 icon = "icons/linkedin.svg"
 text = "yashagw"
 url = "https://linkedin.com/in/yashagw"
+new_tab = true
 
 [[extra.contact]]
 icon = "icons/github.svg"
 text = "yashagw"
 url = "https://github.com/yashagw"
+new_tab = true
 
+#########################
+# Education
+#########################
 [[extra.education]]
 degree = "Bachelor of Technology"
 field = "Electrical Engineering"
@@ -65,6 +99,9 @@ institution = "Vyasa International School, Bangalore"
 year = "April 2019 – April 2020"
 gpa = "95.2%"
 
+#########################
+# Work Experience
+#########################
 [[extra.companies]]
 name = "Averlon Technologies"
 url = "https://averlon.ai"
@@ -81,14 +118,18 @@ positions = [
   { title = "Freelance Software Developer", duration = "May 2021 - Dec 2022", current = false, description = "Delivered 15+ professional projects with 100% client satisfaction rate through effective project management and technical execution." }
 ]
 
-[[extra.menu]]
-name = "Home"
-url = "/"
 
-[[extra.menu]]
-name = "Blog"
-url = "/blog/"
+#########################
+# Footer Configuration
+#########################
+[[extra.footer_links]]
+text = "LinkedIn"
+url = "https://linkedin.com/in/yashagw"
 
-[[extra.menu]]
-name = "Projects"
-url = "/projects/"
+[[extra.footer_links]]
+text = "GitHub"
+url = "https://github.com/yashagw"
+
+[[extra.footer_links]]
+text = "RSS"
+url = "rss.xml"

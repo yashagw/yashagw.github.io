@@ -7,34 +7,38 @@
             <div class="hero-text">
                 <div class="greeting">👋 Hello</div>
                 <p class="intro-paragraph">
-                    I’m Yash Agarwal. I work at <a href="https://averlon.ai" target="_blank" rel="noopener noreferrer">Averlon Technologies</a>, where I build the backend and AI agents that power our cybersecurity platform.
+                    I’m Yash Agarwal. I work at <a href="https://averlon.ai" target="_blank"
+                        rel="noopener noreferrer">Averlon Technologies</a>, where I build the backend and AI agents that
+                    power our cybersecurity platform.
                 </p>
                 <p class="intro-paragraph"></p>
-                    When I'm not shipping code at work, 
-                    I'm deepening my systems understanding — currently building a 
-                    <a href="https://github.com/yashagw/cranedb" target="_blank" rel="noopener noreferrer">relational database from scratch</a> 
-                    in Go because the best way to understand something is to build it yourself.
+                When I'm not shipping code at work,
+                I'm deepening my systems understanding — currently building a
+                <a href="https://github.com/yashagw/cranedb" target="_blank" rel="noopener noreferrer">relational
+                    database from scratch</a>
+                in Go because the best way to understand something is to build it yourself.
                 </p>
-                
+
                 <div class="contact-info">
                     {% for contact in config.extra.contact %}
-                    {% if contact.text != "Resume" %}
                     <span class="contact-item">
                         <img src="{{ get_url(path=contact.icon) }}" alt="{{ contact.text }}" class="contact-icon">
-                        <a href="{{ contact.url }}" {% if not contact.url | starts_with(string="mailto:") %}target="_blank" rel="noopener noreferrer"{% endif %}>{{ contact.text }}</a>
+                        <a href="{{ contact.url }}" {% if contact.new_tab or (not contact.url |
+                            starts_with(string="mailto:" )) %}target="_blank" rel="noopener noreferrer" {% endif %}>{{
+                            contact.text }}</a>
                     </span>
-                    {% endif %}
                     {% endfor %}
                 </div>
             </div>
             <div class="hero-image">
-                <img src="{{ get_url(path='images/profile.jpg') }}" alt="{{ config.extra.author }}" class="profile-photo">
+                <img src="{{ get_url(path='images/profile.jpg') }}" alt="{{ config.extra.author }}"
+                    class="profile-photo">
             </div>
         </div>
     </section>
 
     {% if config.extra.show_skills %}
-    <section class="tech-stack">        
+    <section class="tech-stack">
         <div class="tech-categories">
             <div class="tech-group">
                 <span class="tech-label">Languages:</span>
@@ -42,7 +46,7 @@
                 <span class="tech-item">{{ lang }}</span>{% if not loop.last %}, {% endif %}
                 {% endfor %}
             </div>
-            
+
             <div class="tech-group">
                 <span class="tech-label">Tools & Platforms:</span>
                 {% for tech in config.extra.technologies %}
@@ -62,7 +66,7 @@
                 <h4 class="company-title">
                     <a href="{{ company.url }}" target="_blank" rel="noopener noreferrer">{{ company.name }}</a>
                 </h4>
-                
+
                 {% for position in company.positions %}
                 <div class="position">
                     <div class="position-header">
@@ -105,4 +109,3 @@
     {% endif %}
 </div>
 {% endblock content %}
-
