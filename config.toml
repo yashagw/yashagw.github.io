@@ -105,17 +105,37 @@ gpa = "95.2%"
 [[extra.companies]]
 name = "Averlon Technologies"
 url = "https://averlon.ai"
-positions = [
-  { title = "Software Engineer", duration = "Jun 2024 - Present", current = true, description = "" },
-  { title = "Software Developer Intern", duration = "Jul 2023 - Feb 2024", current = false, description = "Enhanced attack chain analysis by adding application-layer misconfiguration scanning. Developed testing frameworks for network reachability services." },
-  { title = "Software Developer Intern", duration = "Jan 2023 - Jun 2023", current = false, description = "Built testing framework for network reachability service with 35-40 test cases. Enabled AWS EKS support and worked on gRPC Golang backend integration." }
+[[extra.companies.positions]]
+title = "Software Engineer"
+duration = "Jun 2024 - Present"
+current = true
+points = [
+  "Extended security analysis across AWS and Azure to cover multiple cloud components, improving attack surface visibility and architectural insights.",
+  "Reduced account discovery time by 65% on AWS and 25% on Azure by optimizing backend workflows for scanning and assessment.",
+  "Implemented backend modules in Go with gRPC, including asset filtering and minimum-cut analysis for more targeted insights."
+]
+
+[[extra.companies.positions]]
+title = "Software Developer Intern"
+duration = "Jan 2023 - Mar 2024"
+current = false
+points = [
+  "Built a comprehensive network reachability testing framework supporting custom dummy graphs to simulate 45+ scenarios.",
+  "Enabled AWS EKS support for pod-to-pod and internet reachability analysis; leveraged Python and SAT solver for deeper insights.",
+  "Enhanced attack chain analysis with application-layer misconfiguration scanning to uncover exploitable paths."
 ]
 
 [[extra.companies]]
 name = "Upwork"
 url = "https://upwork.com"
-positions = [
-  { title = "Freelance Software Developer", duration = "May 2021 - Dec 2022", current = false, description = "Delivered 15+ professional projects with 100% client satisfaction rate through effective project management and technical execution." }
+[[extra.companies.positions]]
+title = "Freelance Software Developer"
+duration = "May 2021 - Dec 2022"
+current = false
+points = [
+  "Delivered 15+ client projects with consistent 100% satisfaction via strong execution and project management.",
+  "Led a 1.5-year engagement to build a trading bot for Binance and Interactive Brokers with live data analysis, order handling, portfolio tracking, and a Next.js monitoring dashboard.",
+  "Owned end-to-end delivery: requirements, debugging, logging, and DevOps (deploying/maintaining Linux VMs)."
 ]
 
 

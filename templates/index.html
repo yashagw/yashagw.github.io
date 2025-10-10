@@ -73,7 +73,13 @@
                         <span class="role">{{ position.title }}</span>
                         <span class="period">{{ position.duration }}</span>
                     </div>
-                    {% if position.description %}
+                    {% if position.points %}
+                    <ul class="position-points">
+                        {% for point in position.points %}
+                        <li>{{ point }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% elif position.description %}
                     <p class="position-description">{{ position.description }}</p>
                     {% endif %}
                 </div>
