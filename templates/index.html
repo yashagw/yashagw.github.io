@@ -6,18 +6,9 @@
         <div class="hero-content">
             <div class="hero-text">
                 <div class="greeting">👋 Hello</div>
-                <p class="intro-paragraph">
-                    I’m Yash Agarwal. I work at <a href="https://averlon.ai" target="_blank"
-                        rel="noopener noreferrer">Averlon Technologies</a>, where I build the backend and AI agents that
-                    power our cybersecurity platform.
-                </p>
-                <p class="intro-paragraph"></p>
-                When I'm not shipping code at work,
-                I'm deepening my systems understanding — currently building a
-                <a href="https://github.com/yashagw/cranedb" target="_blank" rel="noopener noreferrer">relational
-                    database from scratch</a>
-                in Go because the best way to understand something is to build it yourself.
-                </p>
+                {% for paragraph in config.extra.intro_paragraphs %}
+                <p class="intro-paragraph" data-text="{{ paragraph }}"></p>
+                {% endfor %}
 
                 <div class="contact-info">
                     {% for contact in config.extra.contact %}
@@ -114,4 +105,32 @@
     </section>
     {% endif %}
 </div>
+
+<script>
+    // Parse markdown-style links [url]{text} in intro paragraphs
+    document.addEventListener('DOMContentLoaded', function () {
+        const paragraphs = document.querySelectorAll('.intro-paragraph[data-text]');
+
+        paragraphs.forEach(function (paragraph) {
+            const text = paragraph.getAttribute('data-text');
+
+            // Regular expression to match [url]{text} pattern
+            const linkRegex = /\[([^\]]+)\]\{([^}]+)\}/g;
+            let html = text;
+            let match;
+
+            // Replace all [url]{text} patterns with actual links
+            while ((match = linkRegex.exec(text)) !== null) {
+                const linkUrl = match[1];
+                const linkText = match[2];
+                const linkHtml = `<a href="${linkUrl}" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+                html = html.replace(match[0], linkHtml);
+            }
+
+            paragraph.innerHTML = html;
+            paragraph.removeAttribute('data-text');
+        });
+    });
+</script>
+
 {% endblock content %}

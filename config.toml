@@ -47,6 +47,11 @@ new_tab = true
 author = "Yash Agarwal"
 current_location = "Bangalore, India"
 
+intro_paragraphs = [
+    "I'm Yash Agarwal. I work at [https://averlon.ai]{Averlon Technologies}, where I build the backend and AI agents that power our cybersecurity platform.",
+    "When I'm not shipping code at work, I'm deepening my systems understanding — currently building a [https://github.com/yashagw/cranedb]{relational database from scratch} in Go because the best way to understand something is to build it yourself."
+]
+
 show_experience = true
 show_skills = true
 show_education = true
