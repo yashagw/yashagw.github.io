@@ -36,10 +36,6 @@ name = "Blog"
 url = "/blog/"
 
 [[extra.menu]]
-name = "Projects"
-url = "/projects/"
-
-[[extra.menu]]
 name = "Resume"
 url = "https://drive.google.com/file/d/1GQ9fbXXdbGKR66xLCeZJAmXP7mwRr7O0/view?usp=drive_link"
 new_tab = true
