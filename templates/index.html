@@ -81,6 +81,30 @@
     </section>
     {% endif %}
 
+    {% if config.extra.show_projects %}
+    <section class="projects-section">
+        <h3>Projects</h3>
+        <div class="projects-grid">
+            {% for project in config.extra.projects %}
+            <div class="project-card">
+                <div class="project-title">
+                    <a href="{{ project.url }}" target="_blank" rel="noopener noreferrer">{{ project.name }}</a>
+                </div>
+                <p class="project-description">{{ project.description }}</p>
+                <div class="project-tech">
+                    {% for tag in project.tags %}
+                    <span class="tech-tag">#{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                <div class="project-links">
+                    <a href="{{ project.url }}" target="_blank" rel="noopener noreferrer">View Code →</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
     {% if config.extra.show_education %}
     <section class="education-section">
         <h3>Education</h3>

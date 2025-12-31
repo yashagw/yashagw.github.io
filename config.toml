@@ -59,6 +59,20 @@ show_education = true
 languages = ["Go", "Python", "SQL", "JavaScript", "TypeScript"]
 technologies = ["AWS", "Azure", "Docker", "Kubernetes", "gRPC", "PostgreSQL", "Redis"]
 
+show_projects = true
+
+[[extra.projects]]
+name = "CraneDB"
+description = "A relational database built from scratch in Go properly implementing ARIES recovery, buffer pool management, ACID transactions, and lock-based concurrency control."
+url = "https://github.com/yashagw/cranedb"
+tags = ["Go", "Database", "SQL", "ACID", "ARIES"]
+
+[[extra.projects]]
+name = "Event Management API"
+description = "A system for managing events and ticket bookings. Built as a robust gRPC service with secure JWT authentication, RBAC, and industry-standard API design."
+url = "https://github.com/yashagw/event-management-api"
+tags = ["Go", "Backend", "gRPC", "PostgreSQL", "Authentication", "Authorization"]
+
 [[extra.contact]]
 icon = "icons/email.svg"
 text = "yash.ag@outlook.com"

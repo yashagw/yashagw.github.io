@@ -202,7 +202,8 @@ body {
 
 .experience-section h3,
 .education-section h3,
-.writing-section h3 {
+.writing-section h3,
+.projects-section h3 {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 20px;
@@ -213,7 +214,8 @@ body {
 
 .experience-section h3::after,
 .education-section h3::after,
-.writing-section h3::after {
+.writing-section h3::after,
+.projects-section h3::after {
   content: '';
   position: absolute;
   bottom: 0;
