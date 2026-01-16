@@ -1,6 +1,7 @@
 +++
 title = "Database Recovery Demystified: Understanding ARIES from First Principles"
-date = 2025-12-23
+date = 2026-01-16
+hidden = true
 tags = ["databases", "recovery", "aries"]
 +++
 
@@ -31,6 +32,7 @@ The database does not operate on disk pages directly. It uses **buffers**.
 - The disk page remains unchanged until the buffer is explicitly written back.
 
 To modify data:
+
 1. The page is loaded from disk into a buffer.
 2. The database updates the buffered copy.
 3. The buffer is eventually written back to disk.
@@ -91,6 +93,7 @@ With deferred writes, "success" no longer implies "on disk."
 ### Scenario 1: Durability Violation
 
 Consider a page where `A = 3`.
+
 1. Client sends `UPDATE SET A = 4`.
 2. Database updates buffer to `4`.
 3. Database reports success.
@@ -101,6 +104,7 @@ The background process never wrote the page to disk. On restart, the disk still 
 ### Scenario 2: Atomicity Violation
 
 We might try to fix this by forcing writes for committed transactions. But consider a transaction that updates two pages, `P1` and `P2`.
+
 1. Transaction updates `P1` (buffer).
 2. Transaction updates `P2` (buffer).
 3. Database writes `P1` to disk.
@@ -111,6 +115,7 @@ On restart, the database shows a partial transaction: `P1` is modified, but `P2`
 ### The Constraint
 
 We need a system that satisfies three conflicting goals:
+
 1. **Performance**: Return success without waiting for random page writes.
 2. **Durability**: Never lose a committed update.
 3. **Atomicity**: Apply all updates of a transaction or none.
@@ -149,10 +154,10 @@ The cost: if we crash, committed updates may not be on disk. We need a way to **
 
 The table below shows the four possible combinations:
 
-|              | No-Steal        | Steal              |
-|--------------|-----------------|---------------------|
+|              | No-Steal                      | Steal               |
+| ------------ | ----------------------------- | ------------------- |
 | **Force**    | Simplest. No recovery needed. | Undo required.      |
-| **No-Force** | Redo required.  | Both Undo and Redo. |
+| **No-Force** | Redo required.                | Both Undo and Redo. |
 
 **Force + No-Steal** requires no recovery logic—but it is unusably slow and memory-bound.
 
@@ -167,6 +172,7 @@ The solution is to separate **recording intent** from **applying changes**.
 We introduce an **append-only log** on disk. This log records every change made to the database.
 
 Log records typically track:
+
 - **Transaction ID**: Which transaction made the change.
 - **Type**: `START`, `UPDATE`, `COMMIT`, or `ABORT`.
 - **Change**: The page ID, old value (Undo), and new value (Redo).
@@ -191,7 +197,7 @@ Let’s revisit `UPDATE Page1 SET A = 4` (initial `A=3`).
 6. **Success**: Ack client.
 7. **Background**: Write `Page1` to disk later.
 
-At step 6, the page is not on disk, but the *history* of the change is.
+At step 6, the page is not on disk, but the _history_ of the change is.
 
 ---
 
@@ -200,9 +206,11 @@ At step 6, the page is not on disk, but the *history* of the change is.
 To link the log and data pages, we assign a unique, monotonically increasing **Log Sequence Number (LSN)** to every log record.
 
 We stamp every data page with a `pageLSN`.
+
 - **pageLSN**: The LSN of the most recent log record that modified this page.
 
 This creates a version check:
+
 - If `pageLSN >= logRecordLSN`, the page **contains** the update.
 - If `pageLSN < logRecordLSN`, the page is **stale** compared to the log.
 
@@ -211,7 +219,7 @@ This creates a version check:
 WAL solves the failure scenarios we defined earlier.
 
 **Scenario 1: Crash after Commit, before Page Write**
-*(Revisiting our example where `A` was updated from 3 to 4)*
+_(Revisiting our example where `A` was updated from 3 to 4)_
 
 - The **Log** on disk contains the `UPDATE (3 -> 4)` and `COMMIT` records.
 - The **Disk Page** still contains the old value `A = 3`.
@@ -229,20 +237,22 @@ During recovery, the database sees an active transaction that never completed. I
 
 ## The Cost of Correctness: Recovery Speed
 
-WAL guarantees data safety, but using *only* the log creates a performance nightmare.
+WAL guarantees data safety, but using _only_ the log creates a performance nightmare.
 
 If the database runs for months, the log grows indefinitely. To recover after a crash, we would have to scan the log **from the beginning of time**, replaying millions of updates that were likely already written to disk.
 
-To make recovery fast, we cannot start from zero. We need a way to know the state of the system *at the moment of the crash*:
+To make recovery fast, we cannot start from zero. We need a way to know the state of the system _at the moment of the crash_:
+
 1. **Which transactions were active?** (So we only undo the losers).
 2. **Which pages were dirty?** (So we only redo the missing updates).
 
 ### Tracking State in Memory
 
 We solve this by maintaining two in-memory tables:
+
 - **Transaction Table (TT)**: Tracks all active transactions.
 - **Dirty Page Table (DPT)**: Tracks all modified pages not yet written to disk.
-    - Each entry records the **RecoveryLSN**: the LSN of the *first* change that made the page dirty. This tells us exactly where in the log we need to start "Redo" for that page.
+  - Each entry records the **RecoveryLSN**: the LSN of the _first_ change that made the page dirty. This tells us exactly where in the log we need to start "Redo" for that page.
 
 ### Checkpoints
 
@@ -259,32 +269,37 @@ Checkpoints are purely an optimization for speed. If a checkpoint is corrupted, 
 ARIES (Algorithm for Recovery and Isolation Exploiting Semantics) unifies these concepts into a three-phase recovery process.
 
 ### Phase 1: Analysis
+
 **Goal:** Rebuild the in-memory state as it existed at the time of the crash.
 
 The analysis phase determines **what to do** by scanning the log from the last checkpoint to the end.
+
 - It identifies **"Loser"** transactions: those that were active at the crash but never committed. These must be undone.
 - It identifies **Dirty Pages**: pages that might contain updates that were not flushed to disk.
-- It calculates the **RedoLSN**. By looking at the Dirty Page Table, it finds the **smallest RecoveryLSN** among all dirty pages. This represents the oldest update in the entire system that *might* not have been written to disk. The Redo phase will start scanning from this exact point to ensure no missing updates are skipped.
+- It calculates the **RedoLSN**. By looking at the Dirty Page Table, it finds the **smallest RecoveryLSN** among all dirty pages. This represents the oldest update in the entire system that _might_ not have been written to disk. The Redo phase will start scanning from this exact point to ensure no missing updates are skipped.
 
 ### Phase 2: Redo
+
 **Goal:** Repeat history to restore the database to the exact state at the moment of the crash.
 
 The Redo phase re-applies **all** updates—even those from "Loser" transactions. It scans the log forward starting from the RedoLSN.
 
 For every update record, it checks the page on disk:
+
 - If `pageLSN >= logRecordLSN`: The page already contains this update. **Skip it.**
 - If `pageLSN < logRecordLSN`: The page is stale. **Re-apply the update.**
 
 Crucially, Redo doesn't care if a transaction committed or not. Its only job is to ensure the database state matches the log.
 
 ### Phase 3: Undo
+
 **Goal:** Reverse the effects of uncommitted transactions.
 
 Now that the database state is restored, we must remove the changes made by "Loser" transactions.
 
 - The Undo phase scans the log **backward** from the end.
 - For every update belonging to a Loser transaction, it applies the "old value" to reverse the change.
-- Unlike a simple rollback, ARIES logs these undo operations as **Compensation Log Records (CLRs)**. This ensures that if the system crashes *during* recovery, we don't end up undoing the same operation twice.
+- Unlike a simple rollback, ARIES logs these undo operations as **Compensation Log Records (CLRs)**. This ensures that if the system crashes _during_ recovery, we don't end up undoing the same operation twice.
 
 Once Undo is complete, the database is consistent. Committed data is durable; uncommitted data is erased.
 

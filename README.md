@@ -1,12 +1,12 @@
 # Personal Website & Blog
 
-A modern, responsive personal website and blog built with [Zola](https://www.getzola.org/). Features a clean design, blog functionality, and automated GitHub Pages deployment.
+A modern, responsive personal website and blog built with [Next.js](https://nextjs.org/). Features a clean design, blog functionality with MDX support, and automated GitHub Pages deployment.
 
-## 🚀 Live Site
+## Live Site
 
 [https://yashagw.github.io/](https://yashagw.github.io/)
 
-## 🛠️ Quick Start Guide
+## Quick Start Guide
 
 ### 1. Clone and Setup
 
@@ -15,59 +15,60 @@ git clone https://github.com/yashagw/yashagw.github.io.git
 cd yashagw.github.io
 ```
 
-### 2. Install Zola
+### 2. Install Dependencies
 
-**macOS:**
 ```bash
-brew install zola
+npm install
 ```
 
-**Linux/Windows:** See [Zola installation guide](https://www.getzola.org/documentation/getting-started/installation/)
+### 3. Run Development Server
 
-### 3. Customize Your Site
-
-Edit `config.toml` to personalize:
-- Site title, description, and URL
-- Personal information and contact details
-- Work experience and education
-- Skills and technologies
-
-Replace `static/images/profile.jpg` with your own photo.
+```bash
+npm run dev
+# Visit http://localhost:3000
+```
 
 ### 4. Add Blog Posts
 
-Create new posts in `content/blog/`:
+Create new posts in `content/blog/` as Markdown files:
 
 ```markdown
 +++
 title = "Your Blog Post Title"
 date = 2024-01-15
-tags = ["tag1", "tag2"]
+taxonomies = { tags = ["tag1", "tag2"] }
 +++
 
 Your content here...
 ```
 
-### 5. Test Locally
+### 5. Build for Production
 
 ```bash
-zola serve
-# Visit http://127.0.0.1:1111
+npm run build
 ```
 
-## 🚀 Deployment
+## Deployment
 
 1. **Fork this repository** and rename to `yourusername.github.io`
 2. **Enable GitHub Pages** in repository settings → Pages → Source: "GitHub Actions"
 3. **Push to main branch** - the included workflow will auto-deploy
 
-## 📁 Structure
+## Project Structure
 
-- `config.toml` - Site configuration (play around here!)
-- `content/blog/` - Blog posts
-- `static/` - Images, CSS, icons
-- `templates/` - HTML templates
+- `app/` - Next.js App Router pages and layouts
+- `components/` - React components
+- `content/blog/` - Blog posts (Markdown)
+- `lib/` - Utility functions
+- `public/` - Static assets (images, icons)
 
-## 🤝 Contributing
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+## Contributing
 
 Fork and use as a template for your own site!
