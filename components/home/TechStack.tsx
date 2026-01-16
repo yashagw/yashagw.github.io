@@ -1,10 +1,41 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { skills } from "@/lib/site-config";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
 
 export default function TechStack() {
   return (
-    <section className="tech-stack">
+    <motion.section
+      className="tech-stack"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+    >
       <div className="tech-categories">
-        <div className="tech-group">
+        <motion.div className="tech-group" variants={itemVariants}>
           <span className="tech-label">Languages:</span>{" "}
           {skills.languages.map((lang, index) => (
             <span key={lang}>
@@ -12,9 +43,9 @@ export default function TechStack() {
               {index < skills.languages.length - 1 && ", "}
             </span>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="tech-group">
+        <motion.div className="tech-group" variants={itemVariants}>
           <span className="tech-label">Tools & Platforms:</span>{" "}
           {skills.technologies.map((tech, index) => (
             <span key={tech}>
@@ -22,8 +53,8 @@ export default function TechStack() {
               {index < skills.technologies.length - 1 && ", "}
             </span>
           ))}
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

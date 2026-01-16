@@ -1,9 +1,28 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Playfair_Display, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { siteConfig } from "@/lib/site-config";
 import "./globals.css";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -32,7 +51,7 @@ export default function RootLayout({
           posthog.init('phc_BA7JbimEExlzFzOBD8CxPM7L60JMhacMCxd9f3WPRMN',{api_host:'https://us.i.posthog.com',defaults:'2025-05-24',person_profiles:'identified_only'})`}
         </Script>
       </head>
-      <body>
+      <body className={`${playfair.variable} ${sourceSerif.variable} ${jetbrainsMono.variable}`}>
         <Header />
         <main className="main-content">
           <div className="container">{children}</div>

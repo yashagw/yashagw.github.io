@@ -1,22 +1,43 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { footerLinks, siteConfig } from "@/lib/site-config";
+
+const footerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      delay: 0.2,
+    },
+  },
+};
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer>
+    <motion.footer
+      variants={footerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+    >
       <div className="container">
         <div className="footer-content">
           <div className="social-links">
             {footerLinks.map((link) => (
-              <a
+              <motion.a
                 key={link.text}
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
               >
                 {link.text}
-              </a>
+              </motion.a>
             ))}
           </div>
           <div className="copyright">
@@ -31,6 +52,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   );
 }
