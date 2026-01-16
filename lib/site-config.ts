@@ -4,6 +4,10 @@ export const siteConfig = {
   baseUrl: "https://yashagw.github.io",
   author: "Yash Agarwal",
   currentLocation: "Bangalore, India",
+  theme: {
+    toggleEnabled: false,
+    defaultTheme: "dark" as "light" | "dark",
+  },
 };
 
 export const navigation = [
