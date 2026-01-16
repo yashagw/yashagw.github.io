@@ -5,13 +5,14 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import { getAllPostSlugs, getPostBySlug, slugifyTag } from "@/lib/posts";
-import { CodeBlock, Callout } from "@/components/mdx";
+import { CodeBlock, Callout, WALVisualization } from "@/components/mdx";
 import type { Metadata } from "next";
 
 // Custom MDX components for interactive blog posts
 const mdxComponents = {
   CodeBlock,
   Callout,
+  WALVisualization,
 };
 
 interface Props {

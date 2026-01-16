@@ -154,10 +154,27 @@ The cost: if we crash, committed updates may not be on disk. We need a way to **
 
 The table below shows the four possible combinations:
 
-|              | No-Steal                      | Steal               |
-| ------------ | ----------------------------- | ------------------- |
-| **Force**    | Simplest. No recovery needed. | Undo required.      |
-| **No-Force** | Redo required.                | Both Undo and Redo. |
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>No-Steal</th>
+      <th>Steal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Force</strong></td>
+      <td>Simplest. No recovery needed.</td>
+      <td>Undo required.</td>
+    </tr>
+    <tr>
+      <td><strong>No-Force</strong></td>
+      <td>Redo required.</td>
+      <td>Both Undo and Redo.</td>
+    </tr>
+  </tbody>
+</table>
 
 **Force + No-Steal** requires no recovery logic—but it is unusably slow and memory-bound.
 
@@ -198,6 +215,8 @@ Let’s revisit `UPDATE Page1 SET A = 4` (initial `A=3`).
 7. **Background**: Write `Page1` to disk later.
 
 At step 6, the page is not on disk, but the _history_ of the change is.
+
+<WALVisualization />
 
 ---
 

@@ -3,6 +3,7 @@
 
 export { default as CodeBlock } from "./CodeBlock";
 export { default as Callout } from "./Callout";
+export { default as WALVisualization } from "./WALVisualization";
 
 // Example usage in MDX files:
 //
