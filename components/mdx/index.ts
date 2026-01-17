@@ -4,6 +4,12 @@
 export { default as CodeBlock } from "./CodeBlock";
 export { default as Callout } from "./Callout";
 export { default as WALVisualization } from "./WALVisualization";
+export { default as DatabaseModel } from "./DatabaseModel";
+export { default as SynchronousWrites } from "./SynchronousWrites";
+export { default as DurabilityViolation } from "./DurabilityViolation";
+export { default as AtomicityViolation } from "./AtomicityViolation";
+export { default as TransactionTable } from "./TransactionTable";
+export { default as DirtyPageTable } from "./DirtyPageTable";
 
 // Example usage in MDX files:
 //

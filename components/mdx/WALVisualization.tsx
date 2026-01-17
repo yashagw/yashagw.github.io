@@ -84,6 +84,17 @@ export default function WALVisualization() {
   const [lsnCounter, setLsnCounter] = useState(1);
   const [isFlushingPage, setIsFlushingPage] = useState(false);
   const [flushingPageData, setFlushingPageData] = useState<PageState | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Add CSS animation for gradient
   useEffect(() => {
@@ -203,7 +214,7 @@ export default function WALVisualization() {
       setIsFlushingPage(false);
       setFlushingPageData(null);
     }
-    
+
     setBufferPage(bufferPageState);
     setLsnCounter(lsn);
   }, [currentStep]);
@@ -211,7 +222,7 @@ export default function WALVisualization() {
   const handleStepBackward = useCallback(() => {
     if (currentStep <= 0) return;
     setCurrentStep((prev) => prev - 1);
-  }, []);
+  }, [currentStep]);
 
   const reset = useCallback(() => {
     setCurrentStep(0);
@@ -231,13 +242,30 @@ export default function WALVisualization() {
       className="wal-visualization"
       style={{
         margin: "2rem 0",
-        padding: "1.5rem",
+        padding: isMobile ? "1rem" : "1.5rem",
         background: "var(--bg-secondary)",
         borderRadius: "8px",
         border: "1px solid var(--border-primary)",
         position: "relative",
       }}
     >
+      {/* Mobile scroll hint */}
+      {isMobile && (
+        <div
+          style={{
+            padding: "0.5rem 0.75rem",
+            marginBottom: "1rem",
+            background: "rgba(59, 130, 246, 0.1)",
+            border: "1px solid rgba(59, 130, 246, 0.3)",
+            borderRadius: "4px",
+            fontSize: "0.75rem",
+            color: "var(--text-secondary)",
+            textAlign: "center",
+          }}
+        >
+          💡 Scroll horizontally to view all columns
+        </div>
+      )}
 
       {/* Step description and navigation */}
       <div
@@ -251,7 +279,7 @@ export default function WALVisualization() {
         }}
       >
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ margin: 0, color: "var(--text-primary)", fontSize: "0.9rem", fontWeight: 500, lineHeight: "1.4" }}>
+          <p style={{ margin: 0, color: "var(--text-primary)", fontSize: isMobile ? "0.8rem" : "0.9rem", fontWeight: 500, lineHeight: "1.4" }}>
             Step {currentStepData.step}: {currentStepData.description}
           </p>
         </div>
@@ -328,22 +356,25 @@ export default function WALVisualization() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr 1fr",
+          gridTemplateColumns: isMobile ? "repeat(4, minmax(200px, 1fr))" : "1fr 1fr 1fr 1fr",
           gap: "1rem",
           marginBottom: "1rem",
           alignItems: "start",
+          overflowX: isMobile ? "auto" : "visible",
+          overflowY: "visible",
+          paddingBottom: isMobile ? "0.5rem" : "0",
         }}
       >
         {/* Log Buffer Column */}
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "column", minWidth: isMobile ? "200px" : "auto" }}>
           <div
             style={{
-              padding: "2rem 1rem",
+              padding: isMobile ? "0.75rem 0.5rem" : "2rem 1rem",
               background: "var(--bg-tertiary)",
               borderRadius: "4px",
               marginBottom: "0.5rem",
               fontWeight: 600,
-              fontSize: "0.875rem",
+              fontSize: isMobile ? "0.75rem" : "0.875rem",
               textAlign: "center",
               height: "44px",
               display: "flex",
@@ -356,8 +387,8 @@ export default function WALVisualization() {
           </div>
           <div
             style={{
-              height: "350px",
-              padding: "1rem",
+              height: isMobile ? "300px" : "350px",
+              padding: isMobile ? "0.75rem" : "1rem",
               background: "var(--bg-primary)",
               borderRadius: "4px",
               border: "2px dashed var(--border-primary)",
@@ -415,15 +446,15 @@ export default function WALVisualization() {
         </div>
 
         {/* Log Disk Column */}
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "column", minWidth: isMobile ? "200px" : "auto" }}>
           <div
             style={{
-              padding: "2rem 1rem",
+              padding: isMobile ? "0.75rem 0.5rem" : "2rem 1rem",
               background: "var(--bg-tertiary)",
               borderRadius: "4px",
               marginBottom: "0.5rem",
               fontWeight: 600,
-              fontSize: "0.875rem",
+              fontSize: isMobile ? "0.75rem" : "0.875rem",
               textAlign: "center",
               height: "44px",
               display: "flex",
@@ -436,8 +467,8 @@ export default function WALVisualization() {
           </div>
           <div
             style={{
-              height: "350px",
-              padding: "1rem",
+              height: isMobile ? "300px" : "350px",
+              padding: isMobile ? "0.75rem" : "1rem",
               background: "var(--bg-primary)",
               borderRadius: "4px",
               border: "2px solid var(--border-primary)",
@@ -494,15 +525,15 @@ export default function WALVisualization() {
         </div>
 
         {/* Buffer (Memory) Column */}
-        <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
+        <div style={{ display: "flex", flexDirection: "column", position: "relative", minWidth: isMobile ? "200px" : "auto" }}>
           <div
             style={{
-              padding: "2rem 1rem",
+              padding: isMobile ? "0.75rem 0.5rem" : "2rem 1rem",
               background: "var(--bg-tertiary)",
               borderRadius: "4px",
               marginBottom: "0.5rem",
               fontWeight: 600,
-              fontSize: "0.875rem",
+              fontSize: isMobile ? "0.75rem" : "0.875rem",
               textAlign: "center",
               height: "44px",
               display: "flex",
@@ -515,8 +546,8 @@ export default function WALVisualization() {
           </div>
           <div
             style={{
-              height: "350px",
-              padding: "1rem",
+              height: isMobile ? "300px" : "350px",
+              padding: isMobile ? "0.75rem" : "1rem",
               background: "var(--bg-primary)",
               borderRadius: "4px",
               border: "2px dashed var(--border-primary)",
@@ -538,9 +569,8 @@ export default function WALVisualization() {
                       ? "rgba(59, 130, 246, 0.1)"
                       : "var(--bg-secondary)",
                     borderRadius: "4px",
-                    border: `2px solid ${
-                      currentStep === 3 ? "var(--accent)" : "var(--border-primary)"
-                    }`,
+                    border: `2px solid ${currentStep === 3 ? "var(--accent)" : "var(--border-primary)"
+                      }`,
                     fontSize: "0.875rem",
                     fontFamily: "var(--font-mono)",
                   }}
@@ -572,15 +602,15 @@ export default function WALVisualization() {
         </div>
 
         {/* Disk Column */}
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "column", minWidth: isMobile ? "200px" : "auto" }}>
           <div
             style={{
-              padding: "2rem 1rem",
+              padding: isMobile ? "0.75rem 0.5rem" : "2rem 1rem",
               background: "var(--bg-tertiary)",
               borderRadius: "4px",
               marginBottom: "0.5rem",
               fontWeight: 600,
-              fontSize: "0.875rem",
+              fontSize: isMobile ? "0.75rem" : "0.875rem",
               textAlign: "center",
               height: "44px",
               display: "flex",
@@ -593,8 +623,8 @@ export default function WALVisualization() {
           </div>
           <div
             style={{
-              height: "350px",
-              padding: "1rem",
+              height: isMobile ? "300px" : "350px",
+              padding: isMobile ? "0.75rem" : "1rem",
               background: "var(--bg-primary)",
               borderRadius: "4px",
               border: "2px solid var(--border-primary)",

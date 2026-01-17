@@ -759,6 +759,18 @@ footer {
   color: var(--text-primary);
 }
 
+.blog-content h4 {
+  margin: 24px 0 12px;
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.blog-content h4::before {
+  content: none;
+}
+
 .blog-content p {
   margin-bottom: 20px;
 }
@@ -802,9 +814,21 @@ footer {
 .blog-content blockquote {
   border-left: 2px solid var(--border-primary);
   margin: 24px 0;
-  padding: 0 0 0 20px;
-  color: var(--text-tertiary);
-  font-style: italic;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-radius: 0 6px 6px 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.blog-content blockquote strong {
+  color: var(--text-primary);
+}
+
+.blog-content hr {
+  border: none;
+  border-top: 1px solid var(--border-secondary);
+  margin: 48px 0;
 }
 
 .blog-content a {
@@ -933,10 +957,136 @@ footer {
   border-radius: 4px;
 }
 
+/* MDX - SynchronousWrites */
+:root {
+  --syncwrites-circle: 32px;
+}
+
+.syncwrites-timeline-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge legacy */
+}
+
+.syncwrites-timeline-scroll::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari */
+}
+
+.syncwrites-timeline {
+  /* Prevent active circle (scale: 1.2) from getting clipped */
+  padding: 6px 0;
+}
+
+.syncwrites-step {
+  flex: 1 1 0;
+}
+
+.syncwrites-step[data-slow="true"] {
+  flex: 1.6 1 0;
+}
+
+.syncwrites-stepLabel {
+  white-space: nowrap;
+}
+
+/* MDX - AtomicityViolation */
+.mdx-atomicity-card {
+  margin: 2rem 0;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border-primary);
+  position: relative;
+}
+
+.mdx-atomicity-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.mdx-atomicity-button {
+  padding: 0.45rem 0.75rem;
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mdx-atomicity-button:hover {
+  background: var(--bg-hover);
+}
+
+.mdx-atomicity-layout {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.mdx-atomicity-panel {
+  padding: 0.9rem;
+  border-radius: 10px;
+  background: var(--bg-primary);
+  min-height: 160px;
+}
+
+.mdx-atomicity-db {
+  position: relative;
+  overflow: hidden;
+}
+
+.mdx-atomicity-db-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mdx-atomicity-db-top-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.mdx-atomicity-db-status {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.mdx-atomicity-flush-pill {
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.mdx-atomicity-db-inner {
+  margin-top: 0.75rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 2;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   :root {
     --section-gap: 24px;
+    --syncwrites-circle: 26px;
   }
 
   .container {
@@ -1015,5 +1165,157 @@ footer {
   .blog-content th,
   .blog-content td {
     padding: 8px 12px;
+  }
+
+  /* DatabaseModel responsive */
+  .database-model-layout {
+    flex-direction: column !important;
+  }
+
+  .database-model-arrows {
+    flex-direction: row !important;
+    padding: 0.5rem !important;
+  }
+
+  .database-model-arrows>div {
+    transform: rotate(90deg);
+  }
+
+  /* DurabilityViolation responsive */
+  .durability-violation-header {
+    flex-wrap: wrap !important;
+    align-items: center !important;
+  }
+
+  .durability-violation-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .durability-violation-db-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .durability-violation-panel {
+    min-height: 0 !important;
+  }
+
+  .durability-violation-button {
+    padding: 0.4rem 0.65rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  /* SynchronousWrites responsive */
+  .syncwrites {
+    padding: 1rem !important;
+    margin: 1.25rem 0 !important;
+  }
+
+  .syncwrites-header {
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem !important;
+  }
+
+  .syncwrites-timeline-scroll {
+    padding-bottom: 6px;
+  }
+
+  .syncwrites-timeline {
+    min-width: 560px;
+    padding: 10px 0;
+  }
+
+  .syncwrites-steps {
+    justify-content: flex-start !important;
+    gap: 18px;
+    width: max-content;
+    padding: 0 6px;
+  }
+
+  .syncwrites-step {
+    flex: 0 0 auto !important;
+    min-width: 92px;
+  }
+
+  .syncwrites-step[data-slow="true"] {
+    min-width: 112px;
+  }
+
+  .syncwrites-stepLabel {
+    white-space: normal !important;
+    max-width: 104px;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .syncwrites-timeHeader {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .syncwrites-timeBox {
+    margin-top: 0rem !important;
+  }
+
+  /* AtomicityViolation responsive */
+  .mdx-atomicity-card {
+    margin: 1.25rem 0;
+    padding: 0.85rem;
+  }
+
+  .mdx-atomicity-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .mdx-atomicity-panel {
+    min-height: 0;
+  }
+
+  .mdx-atomicity-header {
+    flex-wrap: wrap;
+  }
+
+  .mdx-atomicity-button {
+    padding: 0.45rem 0.7rem;
+  }
+
+  .mdx-atomicity-db-top {
+    align-items: flex-start;
+  }
+
+  .mdx-atomicity-db-status {
+    font-size: 0.65rem;
+  }
+
+  .mdx-atomicity-flush-pill {
+    width: 100%;
+    justify-content: center;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .mdx-atomicity-db-inner {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 380px) {
+  .durability-violation {
+    padding: 0.85rem !important;
+  }
+
+  .durability-violation-grid,
+  .durability-violation-db-grid {
+    gap: 0.6rem !important;
+  }
+
+  .durability-violation-subpanel {
+    padding: 0.65rem !important;
+  }
+
+  .durability-violation-successText {
+    font-size: 0.8rem !important;
   }
 }

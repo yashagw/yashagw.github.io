@@ -5,7 +5,7 @@ hidden = true
 tags = ["databases", "recovery", "aries"]
 +++
 
-Databases are trusted systems. When an application writes data and receives a success response, it assumes that data persists—even if the process crashes, the machine reboots, or power fails.
+Databases are trusted systems. When an application writes data and receives a success response, it assumes that data persists-even if the process crashes, the machine reboots, or power fails.
 
 Ensuring this guarantee is the responsibility of the recovery subsystem.
 
@@ -17,37 +17,38 @@ Recovery is not an optional feature. It is fundamental to database correctness, 
 
 We start with a simple, realistic database model.
 
+<DatabaseModel />
+
 ### Data Pages on Disk
 
 - The database stores data on disk in fixed-size units called **data pages**.
 - A page is the smallest unit of disk I/O.
 - Pages reside on stable storage.
 
-### Buffers and Pages in Memory
+### The Buffer Pool
 
 The database does not operate on disk pages directly. It uses **buffers**.
 
 - A buffer is a fixed-size memory region holding one data page.
 - All reads and writes occur through buffers.
 - The disk page remains unchanged until the buffer is explicitly written back.
+- The buffer pool has limited capacity-it can only hold a few pages at once.
 
 To modify data:
 
-1. The page is loaded from disk into a buffer.
+1. The page is **loaded** from disk into a buffer.
 2. The database updates the buffered copy.
-3. The buffer is eventually written back to disk.
+3. The buffer is eventually **flushed** back to disk.
 
-### Simplifying Assumption
+The diagram above shows Page 2 currently loaded into a buffer for processing.
 
-To keep examples clear, we assume **each data page holds exactly one row**.
-
-Updating a row and updating a page are effectively the same operation.
+> **For simplicity:** We assume each data page holds exactly one row. Updating a row and updating a page are effectively the same operation.
 
 ### Naive Design: Synchronous Writes
 
 In our initial design, an update proceeds as follows:
 
-1. Identify the target page.
+1. Receive the client request.
 2. Load the page into a buffer.
 3. Update the page in memory.
 4. **Write the buffer back to disk immediately.**
@@ -57,9 +58,9 @@ From the client’s perspective, data is durable once step 5 completes. If the s
 
 While correct, this design is impractical.
 
----
+<SynchronousWrites />
 
-## Why Synchronous Writes Are Too Slow
+### Why This Design Fails
 
 Forcing a disk write for every update kills performance.
 
@@ -84,35 +85,43 @@ To solve performance issues, we make a critical design decision: **The database 
 
 This decouples transaction execution from disk mechanics, enabling high throughput and batched I/O. However, it introduces a major risk.
 
----
-
-## The Crash Consistency Problem
+### What Breaks: Crash Consistency
 
 With deferred writes, "success" no longer implies "on disk."
 
-### Scenario 1: Durability Violation
+#### Scenario 1: Durability Violation
 
 Consider a page where `A = 3`.
 
+With deferred writes, the database can acknowledge a transaction even though the updated page is still only in memory.
+
 1. Client sends `UPDATE SET A = 4`.
-2. Database updates buffer to `4`.
-3. Database reports success.
-4. **System crashes.**
+2. The database updates the **buffer** to `A = 4` (disk is unchanged).
+3. The database replies **SUCCESS** to the client.
+4. **System crashes** before the background flush writes the dirty page to disk.
 
-The background process never wrote the page to disk. On restart, the disk still reads `A = 3`. The committed update is lost.
+<DurabilityViolation />
 
-### Scenario 2: Atomicity Violation
+After restart, memory is gone, and the disk still reads `A = 3`.
 
-We might try to fix this by forcing writes for committed transactions. But consider a transaction that updates two pages, `P1` and `P2`.
+The client was told “success” for `A = 4`, but the database state that survived the crash is still `A = 3` - that’s the durability violation.
+
+#### Scenario 2: Atomicity Violation
+
+A tempting reaction is: “fine - at commit time, give up deferred writes and just *force* the modified pages to disk before replying success.”
+
+That would address the durability problem, but once a transaction touches *multiple* pages, forcing page flushes introduces a new failure mode: a crash can land you in the middle of those flushes, leaving a partial transaction on disk.
 
 1. Transaction updates `P1` (buffer).
 2. Transaction updates `P2` (buffer).
 3. Database writes `P1` to disk.
-4. **System crashes before writing `P2`.**
+4. **System crashes before writing `P2`** (the client is still waiting for the commit to finish).
 
-On restart, the database shows a partial transaction: `P1` is modified, but `P2` is not. Atomicity is violated.
+<AtomicityViolation />
 
-### The Constraint
+What’s wrong here? After restart, the disk reflects a *partial* transaction: `P1` is modified, but `P2` is not. The database state is no longer “all-or-nothing” - atomicity is violated.
+
+#### The Constraint
 
 We need a system that satisfies three conflicting goals:
 
@@ -121,10 +130,11 @@ We need a system that satisfies three conflicting goals:
 3. **Atomicity**: Apply all updates of a transaction or none.
 
 Modifying data pages directly cannot solve this. We need a separate structure.
+Before we introduce it, we need language for the two buffer-manager freedoms that created these failure modes: **Steal** and **Force**.
 
 ---
 
-## Buffer Management Policies
+## Formalizing the Tradeoffs: Steal and Force
 
 The crash scenarios above stem from two independent design decisions about when dirty pages can be written to disk. These are the **Steal** and **Force** policies.
 
@@ -176,7 +186,7 @@ The table below shows the four possible combinations:
   </tbody>
 </table>
 
-**Force + No-Steal** requires no recovery logic—but it is unusably slow and memory-bound.
+**Force + No-Steal** requires no recovery logic-but it is unusably slow and memory-bound.
 
 Real databases choose **Steal + No-Force** for performance. This combination demands a recovery system capable of both Undo and Redo. The mechanism that enables this is the write-ahead log.
 
@@ -206,21 +216,19 @@ Since the log is append-only, flushing the commit record is a fast, sequential o
 
 Let’s revisit `UPDATE Page1 SET A = 4` (initial `A=3`).
 
-1. **Log**: Write `[START Txn 100]` to log buffer.
-2. **Action**: Update `Page1` buffer to `A=4`.
-3. **Log**: Write `[UPDATE Txn 100, Page1, 3->4]` to log buffer.
-4. **Log**: Write `[COMMIT Txn 100]` to log buffer.
-5. **Flush**: Write log buffer to disk. (Fast sequential I/O).
-6. **Success**: Ack client.
-7. **Background**: Write `Page1` to disk later.
+We start with Page1 on disk containing `A = 3`, an empty buffer pool, and no active transaction. The database loads Page1 into a buffer-both now show `A = 3`.
 
-At step 6, the page is not on disk, but the _history_ of the change is.
+Transaction 100 begins. We write `[START Txn 100]` to the log buffer, then update the Page1 buffer: `A = 3 → 4`. The page is marked dirty (this change exists only in memory). Before this dirty page could be written to disk, we must log the change: `[UPDATE Txn 100, Page1, 3->4]` goes to the log buffer, capturing both old value (for undo) and new value (for redo).
+
+The transaction commits. We write `[COMMIT Txn 100]` to the log buffer, then flush the entire log buffer to disk in a single sequential write. All three records (START, UPDATE, COMMIT) are now on stable storage. We acknowledge success to the client. **Crucially, Page1 is still only in the buffer pool-not yet on disk.**
+
+Later, a background process writes the dirty Page1 to disk. By this point, the log already contains a complete record of the change, protecting against crashes.
 
 <WALVisualization />
 
----
+**The key insight:** When we acknowledge success at commit time, the data page isn't on disk yet. But the log-the history of what happened-is safely persisted. If a crash occurs before the page writeback, we can reconstruct the page state from the log during recovery.
 
-## The Log Sequence Number (LSN)
+### The Log Sequence Number (LSN)
 
 To link the log and data pages, we assign a unique, monotonically increasing **Log Sequence Number (LSN)** to every log record.
 
@@ -269,9 +277,13 @@ To make recovery fast, we cannot start from zero. We need a way to know the stat
 
 We solve this by maintaining two in-memory tables:
 
-- **Transaction Table (TT)**: Tracks all active transactions.
-- **Dirty Page Table (DPT)**: Tracks all modified pages not yet written to disk.
-  - Each entry records the **RecoveryLSN**: the LSN of the _first_ change that made the page dirty. This tells us exactly where in the log we need to start "Redo" for that page.
+**Transaction Table (TT)**: Tracks all active transactions. Each entry records the **LastLSN**: the LSN of the most recent log record written by that transaction. This tells us where to start scanning backward during Undo to reverse all changes made by an uncommitted transaction.
+
+<TransactionTable />
+
+**Dirty Page Table (DPT)**: Tracks all modified pages not yet written to disk. Each entry records the **RecoveryLSN**: the LSN of the _first_ change that made the page dirty. This tells us exactly where in the log we need to start "Redo" for that page. If a page is dirty, it means it might contain updates that were never flushed to disk before the crash.
+
+<DirtyPageTable />
 
 ### Checkpoints
 
@@ -301,7 +313,7 @@ The analysis phase determines **what to do** by scanning the log from the last c
 
 **Goal:** Repeat history to restore the database to the exact state at the moment of the crash.
 
-The Redo phase re-applies **all** updates—even those from "Loser" transactions. It scans the log forward starting from the RedoLSN.
+The Redo phase re-applies **all** updates-even those from "Loser" transactions. It scans the log forward starting from the RedoLSN.
 
 For every update record, it checks the page on disk:
 
@@ -321,7 +333,3 @@ Now that the database state is restored, we must remove the changes made by "Los
 - Unlike a simple rollback, ARIES logs these undo operations as **Compensation Log Records (CLRs)**. This ensures that if the system crashes _during_ recovery, we don't end up undoing the same operation twice.
 
 Once Undo is complete, the database is consistent. Committed data is durable; uncommitted data is erased.
-
----
-
-By decoupling durability (Log) from storage (Pages) and enforcing a strict ordering (LSN), databases deliver on their core promise: **Data is safe, no matter what.**
