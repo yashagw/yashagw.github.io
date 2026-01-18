@@ -281,7 +281,7 @@ We solve this by maintaining two in-memory tables:
 
 <TransactionTable />
 
-**Dirty Page Table (DPT)**: Tracks all modified pages not yet written to disk. Each entry records the **RecoveryLSN**: the LSN of the _first_ change that made the page dirty. This tells us exactly where in the log we need to start "Redo" for that page. If a page is dirty, it means it might contain updates that were never flushed to disk before the crash.
+**Dirty Page Table (DPT)**: Tracks all modified pages not yet written to disk. Each entry records the **RecoveryLSN**: the LSN of the _first_ change that made the page dirty. This tells us exactly where in the log we need to start "Redo" for that page. When a dirty page is flushed to disk, it's removed from the DPT - so the table only contains pages that are *currently* dirty in memory, keeping it bounded by the buffer pool size rather than growing indefinitely.
 
 <DirtyPageTable />
 
@@ -297,39 +297,35 @@ Checkpoints are purely an optimization for speed. If a checkpoint is corrupted, 
 
 ## ARIES Recovery Algorithm
 
-ARIES (Algorithm for Recovery and Isolation Exploiting Semantics) unifies these concepts into a three-phase recovery process.
+ARIES (Algorithm for Recovery and Isolation Exploiting Semantics) unifies these concepts into a three-phase recovery process. Step through the interactive diagrams below to see each phase in action.
 
 ### Phase 1: Analysis
 
 **Goal:** Rebuild the in-memory state as it existed at the time of the crash.
 
-The analysis phase determines **what to do** by scanning the log from the last checkpoint to the end.
+<ARIESAnalysis />
 
-- It identifies **"Loser"** transactions: those that were active at the crash but never committed. These must be undone.
-- It identifies **Dirty Pages**: pages that might contain updates that were not flushed to disk.
-- It calculates the **RedoLSN**. By looking at the Dirty Page Table, it finds the **smallest RecoveryLSN** among all dirty pages. This represents the oldest update in the entire system that _might_ not have been written to disk. The Redo phase will start scanning from this exact point to ensure no missing updates are skipped.
+The diagram above shows how Analysis scans from the last checkpoint (LSN 8) to the end of the log (LSN 13). As it processes each record, it rebuilds the **Transaction Table** (tracking which transactions were active) and the **Dirty Page Table** (tracking which pages may need redo). By the end, we know:
+
+- **Winners**: T100 and T102 - they committed before the crash
+- **Losers**: T101 and T103 - they were active at crash but never committed
+- **RedoLSN**: the smallest recLSN in DPT - where Redo must begin (LSN 2)
 
 ### Phase 2: Redo
 
 **Goal:** Repeat history to restore the database to the exact state at the moment of the crash.
 
-The Redo phase re-applies **all** updates-even those from "Loser" transactions. It scans the log forward starting from the RedoLSN.
+<ARIESRedo />
 
-For every update record, it checks the page on disk:
-
-- If `pageLSN >= logRecordLSN`: The page already contains this update. **Skip it.**
-- If `pageLSN < logRecordLSN`: The page is stale. **Re-apply the update.**
-
-Crucially, Redo doesn't care if a transaction committed or not. Its only job is to ensure the database state matches the log.
+Starting from RedoLSN (LSN 2), Redo scans forward and checks each update record against the disk page. If `pageLSN < logLSN`, the update was lost and must be re-applied. Notice how LSN 10, 11, and 13 are redone (those pages were stale) while LSN 2, 4, and 6 are skipped (already on disk). Crucially, Redo doesn't care about commit status - it re-applies *everything*, including uncommitted changes from T101 and T103.
 
 ### Phase 3: Undo
 
 **Goal:** Reverse the effects of uncommitted transactions.
 
-Now that the database state is restored, we must remove the changes made by "Loser" transactions.
+<ARIESUndo />
 
-- The Undo phase scans the log **backward** from the end.
-- For every update belonging to a Loser transaction, it applies the "old value" to reverse the change.
-- Unlike a simple rollback, ARIES logs these undo operations as **Compensation Log Records (CLRs)**. This ensures that if the system crashes _during_ recovery, we don't end up undoing the same operation twice.
+Now that the database matches crash-time state, Undo scans *backward* to reverse Loser updates (T101 and T103). For each undo, it writes a **Compensation Log Record (CLR)** - this ensures that if we crash *during* recovery, we won't undo the same operation twice. By the end, P1, P2, and P4 are restored to their original values, and both T101's and T103's uncommitted changes are erased.
 
 Once Undo is complete, the database is consistent. Committed data is durable; uncommitted data is erased.
+

@@ -10,6 +10,9 @@ export { default as DurabilityViolation } from "./DurabilityViolation";
 export { default as AtomicityViolation } from "./AtomicityViolation";
 export { default as TransactionTable } from "./TransactionTable";
 export { default as DirtyPageTable } from "./DirtyPageTable";
+export { default as ARIESAnalysis } from "./ARIESAnalysis";
+export { default as ARIESRedo } from "./ARIESRedo";
+export { default as ARIESUndo } from "./ARIESUndo";
 
 // Example usage in MDX files:
 //

@@ -5,7 +5,7 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import { getAllPostSlugs, getPostBySlug, slugifyTag } from "@/lib/posts";
-import { CodeBlock, Callout, WALVisualization, DatabaseModel, SynchronousWrites, DurabilityViolation, AtomicityViolation, TransactionTable, DirtyPageTable } from "@/components/mdx";
+import { CodeBlock, Callout, WALVisualization, DatabaseModel, SynchronousWrites, DurabilityViolation, AtomicityViolation, TransactionTable, DirtyPageTable, ARIESAnalysis, ARIESRedo, ARIESUndo } from "@/components/mdx";
 import type { Metadata } from "next";
 
 // Custom MDX components for interactive blog posts
@@ -19,6 +19,9 @@ const mdxComponents = {
   AtomicityViolation,
   TransactionTable,
   DirtyPageTable,
+  ARIESAnalysis,
+  ARIESRedo,
+  ARIESUndo,
 };
 
 interface Props {
