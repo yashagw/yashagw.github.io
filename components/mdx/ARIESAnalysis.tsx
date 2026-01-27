@@ -189,8 +189,8 @@ export default function ARIESAnalysis() {
     const reset = useCallback(() => setCurrentStep(0), []);
 
     const currentStepData = STEPS[currentStep];
-    const redoLSN = currentStep >= 7 ? Math.min(...dpt.map(e => e.recLSN)) : null;
-    const losers = currentStep >= 7 ? tt.filter(e => e.status === "active") : [];
+    const isComplete = currentStep >= 7;
+    const redoLSN = isComplete && dpt.length > 0 ? Math.min(...dpt.map(e => e.recLSN)) : null;
 
     return (
         <div
@@ -285,9 +285,9 @@ export default function ARIESAnalysis() {
             </div>
 
             {/* Step description */}
-            <div style={{ marginBottom: "1.25rem", padding: "0.75rem 1rem", background: "var(--bg-primary)", borderRadius: "6px", border: "1px solid var(--border-primary)" }}>
-                <span style={{ color: "#00d4ff", fontWeight: 600 }}>Step {currentStep + 1}:</span>{" "}
-                <span style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>{currentStepData.title}</span>
+            <div style={{ marginBottom: "1.25rem", padding: "0.75rem 1rem", background: "var(--bg-primary)", borderRadius: "6px", border: "1px solid var(--border-primary)", minHeight: "6.8rem", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <div style={{ color: "#00d4ff", fontWeight: 600, marginBottom: "0.25rem" }}>Step {currentStep + 1}:</div>
+                <div style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>{currentStepData.title}</div>
             </div>
 
             {/* Log Timeline */}
@@ -302,7 +302,7 @@ export default function ARIESAnalysis() {
                         display: "flex",
                         gap: "0.4rem",
                         overflowX: "auto",
-                        padding: "0.75rem",
+                        padding: "1.25rem 0.75rem",
                         background: "var(--bg-primary)",
                         borderRadius: "6px",
                         border: "1px solid var(--border-primary)",
@@ -392,7 +392,7 @@ export default function ARIESAnalysis() {
             {/* TT and DPT */}
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1rem" }}>
                 {/* Transaction Table */}
-                <div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
                     <div style={{ fontSize: "0.85rem", color: "var(--text-tertiary)", marginBottom: "0.5rem", fontWeight: 500 }}>
                         Transaction Table
                     </div>
@@ -402,50 +402,52 @@ export default function ARIESAnalysis() {
                             background: "var(--bg-primary)",
                             borderRadius: "6px",
                             border: "1px solid var(--border-primary)",
-                            minHeight: "120px",
+                            minHeight: "14rem",
+                            flex: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: tt.length === 0 ? "center" : "flex-start",
                         }}
                     >
                         <AnimatePresence>
                             {tt.length === 0 ? (
-                                <div style={{ color: "var(--text-tertiary)", fontSize: "0.9rem", textAlign: "center", padding: "1.5rem" }}>(empty — waiting for checkpoint)</div>
+                                <div style={{ color: "var(--text-tertiary)", fontSize: "0.9rem", textAlign: "center" }}>(empty — waiting for checkpoint)</div>
                             ) : (
                                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                                    {tt.map((entry) => (
-                                        <motion.div
-                                            key={entry.txnId}
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            style={{
-                                                display: "flex",
-                                                justifyContent: "space-between",
-                                                alignItems: "center",
-                                                fontSize: "0.9rem",
-                                                fontFamily: "var(--font-mono)",
-                                                padding: "0.5rem 0.75rem",
-                                                background: "var(--bg-secondary)",
-                                                borderRadius: "4px",
-                                                border: entry.status === "committed" ? "1px solid rgba(34, 197, 94, 0.3)" : "1px solid transparent",
-                                            }}
-                                        >
-                                            <span style={{ color: "var(--text-primary)", fontWeight: 500 }}>T{entry.txnId}</span>
-                                            <span style={{ color: entry.status === "committed" ? "#22c55e" : "#fbbf24", fontWeight: 500 }}>
-                                                {entry.status === "committed" ? "✓ Winner" : "active"} <span style={{ color: "var(--text-tertiary)", fontSize: "0.8rem" }}>(LSN {entry.lastLSN})</span>
-                                            </span>
-                                        </motion.div>
-                                    ))}
+                                    {tt.map((entry) => {
+                                        const isLoser = isComplete && entry.status === "active";
+                                        return (
+                                            <motion.div
+                                                key={entry.txnId}
+                                                initial={{ opacity: 0, x: -10 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                style={{
+                                                    display: "flex",
+                                                    justifyContent: "space-between",
+                                                    alignItems: "center",
+                                                    fontSize: "0.9rem",
+                                                    fontFamily: "var(--font-mono)",
+                                                    padding: "0.5rem 0.75rem",
+                                                    background: isLoser ? "rgba(239, 68, 68, 0.1)" : "var(--bg-secondary)",
+                                                    borderRadius: "4px",
+                                                    border: entry.status === "committed" ? "1px solid rgba(34, 197, 94, 0.3)" : isLoser ? "1px solid rgba(239, 68, 68, 0.3)" : "1px solid transparent",
+                                                }}
+                                            >
+                                                <span style={{ color: "var(--text-primary)", fontWeight: 500 }}>T{entry.txnId}</span>
+                                                <span style={{ color: entry.status === "committed" ? "#22c55e" : isLoser ? "#ef4444" : "#fbbf24", fontWeight: 500 }}>
+                                                    {entry.status === "committed" ? "✓ Winner" : isLoser ? "✗ Loser" : "active"} <span style={{ color: "var(--text-tertiary)", fontSize: "0.8rem" }}>(LSN {entry.lastLSN})</span>
+                                                </span>
+                                            </motion.div>
+                                        );
+                                    })}
                                 </div>
                             )}
                         </AnimatePresence>
-                        {losers.length > 0 && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginTop: "0.75rem", fontSize: "0.9rem", color: "#ef4444", fontWeight: 500, padding: "0.5rem 0.75rem", background: "rgba(239, 68, 68, 0.1)", borderRadius: "4px", border: "1px solid rgba(239, 68, 68, 0.3)" }}>
-                                ✗ Losers: {losers.map(l => `T${l.txnId}`).join(", ")} (never committed)
-                            </motion.div>
-                        )}
                     </div>
                 </div>
 
                 {/* Dirty Page Table */}
-                <div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
                     <div style={{ fontSize: "0.85rem", color: "var(--text-tertiary)", marginBottom: "0.5rem", fontWeight: 500 }}>
                         Dirty Page Table
                     </div>
@@ -455,44 +457,54 @@ export default function ARIESAnalysis() {
                             background: "var(--bg-primary)",
                             borderRadius: "6px",
                             border: "1px solid var(--border-primary)",
-                            minHeight: "120px",
+                            minHeight: "11rem",
+                            flex: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: dpt.length === 0 ? "center" : "flex-start",
                         }}
                     >
                         <AnimatePresence>
                             {dpt.length === 0 ? (
-                                <div style={{ color: "var(--text-tertiary)", fontSize: "0.9rem", textAlign: "center", padding: "1.5rem" }}>(empty — waiting for checkpoint)</div>
+                                <div style={{ color: "var(--text-tertiary)", fontSize: "0.9rem", textAlign: "center" }}>(empty — waiting for checkpoint)</div>
                             ) : (
                                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                                    {dpt.map((entry) => (
-                                        <motion.div
-                                            key={entry.pageId}
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            style={{
-                                                display: "flex",
-                                                justifyContent: "space-between",
-                                                fontSize: "0.9rem",
-                                                fontFamily: "var(--font-mono)",
-                                                padding: "0.5rem 0.75rem",
-                                                background: "var(--bg-secondary)",
-                                                borderRadius: "4px",
-                                            }}
-                                        >
-                                            <span style={{ color: "var(--text-primary)", fontWeight: 500 }}>{entry.pageId}</span>
-                                            <span style={{ color: "var(--text-secondary)" }}>recLSN: {entry.recLSN}</span>
-                                        </motion.div>
-                                    ))}
+                                    {dpt.map((entry) => {
+                                        const isRedoStart = redoLSN !== null && entry.recLSN === redoLSN;
+                                        return (
+                                            <motion.div
+                                                key={entry.pageId}
+                                                initial={{ opacity: 0, x: -10 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                style={{
+                                                    display: "flex",
+                                                    justifyContent: "space-between",
+                                                    alignItems: "center",
+                                                    fontSize: "0.9rem",
+                                                    fontFamily: "var(--font-mono)",
+                                                    padding: "0.5rem 0.75rem",
+                                                    background: isRedoStart ? "rgba(0, 255, 136, 0.1)" : "var(--bg-secondary)",
+                                                    borderRadius: "4px",
+                                                    border: isRedoStart ? "1px solid rgba(0, 255, 136, 0.3)" : "1px solid transparent",
+                                                }}
+                                            >
+                                                <span style={{ color: "var(--text-primary)", fontWeight: 500 }}>{entry.pageId}</span>
+                                                <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                                    {isRedoStart && (
+                                                        <span style={{ color: "#00ff88", fontSize: "0.75rem", fontWeight: 600 }}>← RedoLSN</span>
+                                                    )}
+                                                    <span style={{ color: isRedoStart ? "#00ff88" : "var(--text-secondary)" }}>recLSN: {entry.recLSN}</span>
+                                                </span>
+                                            </motion.div>
+                                        );
+                                    })}
                                 </div>
                             )}
                         </AnimatePresence>
-                        {redoLSN !== null && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginTop: "0.75rem", fontSize: "0.9rem", color: "#00ff88", fontWeight: 500, padding: "0.5rem 0.75rem", background: "rgba(0, 255, 136, 0.1)", borderRadius: "4px", border: "1px solid rgba(0, 255, 136, 0.3)" }}>
-                                → RedoLSN = {redoLSN} (smallest recLSN in DPT)
-                            </motion.div>
-                        )}
                     </div>
                 </div>
             </div>
+
         </div>
     );
 }

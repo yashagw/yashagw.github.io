@@ -21,26 +21,13 @@ We start with a simple, realistic database model.
 
 ### Data Pages on Disk
 
-- The database stores data on disk in fixed-size units called **data pages**.
-- A page is the smallest unit of disk I/O.
-- Pages reside on stable storage.
+The database stores data on disk in fixed-size units called **data pages**. A page is the smallest unit of disk I/O and resides on stable storage.
 
 ### The Buffer Pool
 
-The database does not operate on disk pages directly. It uses **buffers**.
+The database does not operate on disk pages directly. Instead, it uses a **buffer pool** - a collection of fixed-size memory regions, each capable of holding one data page. All reads and writes occur through these buffers; the disk page remains unchanged until the buffer is explicitly written back. Because memory is limited, the buffer pool can only hold a small subset of pages at any given time.
 
-- A buffer is a fixed-size memory region holding one data page.
-- All reads and writes occur through buffers.
-- The disk page remains unchanged until the buffer is explicitly written back.
-- The buffer pool has limited capacity-it can only hold a few pages at once.
-
-To modify data:
-
-1. The page is **loaded** from disk into a buffer.
-2. The database updates the buffered copy.
-3. The buffer is eventually **flushed** back to disk.
-
-The diagram above shows Page 2 currently loaded into a buffer for processing.
+To modify data, the page is first **loaded** from disk into a buffer. The database then updates the buffered copy and eventually **flushes** it back to disk. The diagram above shows Page 2 currently loaded into a buffer for processing.
 
 > **For simplicity:** We assume each data page holds exactly one row. Updating a row and updating a page are effectively the same operation.
 
@@ -108,9 +95,9 @@ The client was told “success” for `A = 4`, but the database state that survi
 
 #### Scenario 2: Atomicity Violation
 
-A tempting reaction is: “fine - at commit time, give up deferred writes and just *force* the modified pages to disk before replying success.”
+A tempting reaction is: “fine - at commit time, give up deferred writes and just **force** the modified pages to disk before replying success.”
 
-That would address the durability problem, but once a transaction touches *multiple* pages, forcing page flushes introduces a new failure mode: a crash can land you in the middle of those flushes, leaving a partial transaction on disk.
+That would address the durability problem, but once a transaction touches **multiple** pages, forcing page flushes introduces a new failure mode: a crash can land you in the middle of those flushes, leaving a partial transaction on disk.
 
 1. Transaction updates `P1` (buffer).
 2. Transaction updates `P2` (buffer).
@@ -119,7 +106,7 @@ That would address the durability problem, but once a transaction touches *multi
 
 <AtomicityViolation />
 
-What’s wrong here? After restart, the disk reflects a *partial* transaction: `P1` is modified, but `P2` is not. The database state is no longer “all-or-nothing” - atomicity is violated.
+What’s wrong here? After restart, the disk reflects a **partial** transaction: `P1` is modified, but `P2` is not. The database state is no longer “all-or-nothing” - atomicity is violated.
 
 #### The Constraint
 
@@ -224,6 +211,8 @@ The transaction commits. We write `[COMMIT Txn 100]` to the log buffer, then flu
 
 Later, a background process writes the dirty Page1 to disk. By this point, the log already contains a complete record of the change, protecting against crashes.
 
+**Click through the visualization below to see each step in action.**
+
 <WALVisualization />
 
 **The key insight:** When we acknowledge success at commit time, the data page isn't on disk yet. But the log-the history of what happened-is safely persisted. If a crash occurs before the page writeback, we can reconstruct the page state from the log during recovery.
@@ -281,7 +270,7 @@ We solve this by maintaining two in-memory tables:
 
 <TransactionTable />
 
-**Dirty Page Table (DPT)**: Tracks all modified pages not yet written to disk. Each entry records the **RecoveryLSN**: the LSN of the _first_ change that made the page dirty. This tells us exactly where in the log we need to start "Redo" for that page. When a dirty page is flushed to disk, it's removed from the DPT - so the table only contains pages that are *currently* dirty in memory, keeping it bounded by the buffer pool size rather than growing indefinitely.
+**Dirty Page Table (DPT)**: Tracks all modified pages not yet written to disk. Each entry records the **RecoveryLSN**: the LSN of the **first** change that made the page dirty. This tells us exactly where in the log we need to start "Redo" for that page. When a dirty page is flushed to disk, it's removed from the DPT - so the table only contains pages that are **currently** dirty in memory, keeping it bounded by the buffer pool size rather than growing indefinitely.
 
 <DirtyPageTable />
 
@@ -317,7 +306,7 @@ The diagram above shows how Analysis scans from the last checkpoint (LSN 8) to t
 
 <ARIESRedo />
 
-Starting from RedoLSN (LSN 2), Redo scans forward and checks each update record against the disk page. If `pageLSN < logLSN`, the update was lost and must be re-applied. Notice how LSN 10, 11, and 13 are redone (those pages were stale) while LSN 2, 4, and 6 are skipped (already on disk). Crucially, Redo doesn't care about commit status - it re-applies *everything*, including uncommitted changes from T101 and T103.
+Starting from RedoLSN (LSN 2), Redo scans forward and checks each update record against the disk page. If `pageLSN < logLSN`, the update was lost and must be re-applied. Notice how LSN 10, 11, and 13 are redone (those pages were stale) while LSN 2, 4, and 6 are skipped (already on disk). Crucially, Redo doesn't care about commit status - it re-applies **everything**, including uncommitted changes from T101 and T103.
 
 ### Phase 3: Undo
 
@@ -325,7 +314,6 @@ Starting from RedoLSN (LSN 2), Redo scans forward and checks each update record 
 
 <ARIESUndo />
 
-Now that the database matches crash-time state, Undo scans *backward* to reverse Loser updates (T101 and T103). For each undo, it writes a **Compensation Log Record (CLR)** - this ensures that if we crash *during* recovery, we won't undo the same operation twice. By the end, P1, P2, and P4 are restored to their original values, and both T101's and T103's uncommitted changes are erased.
+Now that the database matches crash-time state, Undo scans **backward** to reverse Loser updates (T101 and T103). For each undo, it writes a **Compensation Log Record (CLR)** - this ensures that if we crash **during** recovery, we won't undo the same operation twice. By the end, P1, P2, and P4 are restored to their original values, and both T101's and T103's uncommitted changes are erased.
 
 Once Undo is complete, the database is consistent. Committed data is durable; uncommitted data is erased.
-

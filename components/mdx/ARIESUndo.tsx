@@ -228,9 +228,9 @@ export default function ARIESUndo() {
             </div>
 
             {/* Step description */}
-            <div style={{ marginBottom: "1.25rem", padding: "0.75rem 1rem", background: "var(--bg-primary)", borderRadius: "6px", border: "1px solid var(--border-primary)" }}>
-                <span style={{ color: "#ff8844", fontWeight: 600 }}>Step {currentStep + 1}:</span>{" "}
-                <span style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>{currentStepData.title}</span>
+            <div style={{ marginBottom: "1.25rem", padding: "0.75rem 1rem", background: "var(--bg-primary)", borderRadius: "6px", border: "1px solid var(--border-primary)", minHeight: "6.8rem", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <div style={{ color: "#ff8844", fontWeight: 600, marginBottom: "0.25rem" }}>Step {currentStep + 1}:</div>
+                <div style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>{currentStepData.title}</div>
             </div>
 
             {/* Loser Updates + CLRs */}
@@ -246,10 +246,11 @@ export default function ARIESUndo() {
                         gap: "0.4rem",
                         alignItems: "center",
                         overflowX: "auto",
-                        padding: "0.75rem",
+                        padding: "1.25rem 0.75rem",
                         background: "var(--bg-primary)",
                         borderRadius: "6px",
                         border: "1px solid var(--border-primary)",
+                        minHeight: "8.5rem",
                     }}
                 >
                     {LOSER_UPDATES.map((update) => {
