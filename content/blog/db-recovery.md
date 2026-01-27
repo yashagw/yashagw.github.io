@@ -1,7 +1,7 @@
 +++
 title = "Database Recovery Demystified: Understanding ARIES from First Principles"
-date = 2026-01-16
-hidden = true
+date = 2026-01-28
+hidden = false
 tags = ["databases", "recovery", "aries"]
 +++
 
